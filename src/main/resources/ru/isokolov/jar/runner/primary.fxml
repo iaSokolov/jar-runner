@@ -84,13 +84,27 @@
                      <content>
                         <VBox>
                            <children>
-                              <TableView fx:id="jInfoTableView" prefHeight="200.0" prefWidth="200.0">
-                                <columns>
-                                  <TableColumn fx:id="nameColumn" prefWidth="75.0" text="C1" />
-                                  <TableColumn fx:id="valueColumn" prefWidth="75.0" text="C2" />
-                                </columns>
-                              </TableView>
-                              <TitledPane animated="false" text="Вывод">
+                              <TitledPane text="Флаги JVM" VBox.vgrow="ALWAYS">
+                                 <content>
+                                    <TableView fx:id="jvmFlagsTableView">
+                                      <columns>
+                                        <TableColumn fx:id="flagNameColumn" prefWidth="75.0" text="Флаг" />
+                                        <TableColumn fx:id="flagValueColumn" prefWidth="75.0" text="Значение" />
+                                      </columns>
+                                    </TableView>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane expanded="false" text="Параметры JVM">
+                                 <content>
+                                    <TableView fx:id="jvmParamsTableView">
+                                       <columns>
+                                          <TableColumn fx:id="paramNameColumn" prefWidth="75.0" text="Параметр" />
+                                          <TableColumn fx:id="paramValueColumn" prefWidth="75.0" text="Значение" />
+                                       </columns>
+                                    </TableView>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane animated="false" expanded="false" text="Вывод">
                                 <content>
                                     <VBox>
                                        <children>

@@ -37,24 +37,37 @@ public class PrimaryController {
     private TextField pathTextField;
 
     @FXML
-    private TableView<JInfoData> jInfoTableView;
+    private TableView<JInfoData> jvmFlagsTableView;
     
     @FXML
-    private TableColumn<JInfoData, String> nameColumn; // Колонка имени
+    private TableView<JInfoData> jvmParamsTableView;
     
     @FXML
-    private TableColumn<JInfoData, String> valueColumn;
+    private TableColumn<JInfoData, String> paramNameColumn; 
     
-    private ObservableList<JInfoData> data;
+    @FXML
+    private TableColumn<JInfoData, String> paramValueColumn;
+    
+    @FXML
+    private TableColumn<JInfoData, String> flagNameColumn;
+    
+    @FXML
+    private TableColumn<JInfoData, String> flagValueColumn;
+    
+    private ObservableList<JInfoData> jvmParams;
+    private ObservableList<JInfoData> jvmFlags;
     
     @FXML
     public void initialize() {
-        data = FXCollections.observableArrayList(); // Инициализация списка данных
-
-        nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        valueColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
-
-        jInfoTableView.setItems(data);
+        jvmParams = FXCollections.observableArrayList(); 
+        paramNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        paramValueColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
+        jvmParamsTableView.setItems(jvmParams);
+        
+        jvmFlags = FXCollections.observableArrayList();        
+        flagNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        flagValueColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());        
+        jvmFlagsTableView.setItems(jvmFlags);
     }    
 
     @FXML
@@ -125,27 +138,29 @@ public class PrimaryController {
     
     private void parseJInfoLine(String line) {
         // Проверяем, содержит ли строка информацию о флагах
-        if (line.startsWith("-XX")) {
-            // Если строка содержит "VM Flags:", добавляем её в таблицу
+        if (line.startsWith("-XX")) {            
             String[] flags = line.split(" ");
             for (int i = 0; i< flags.length; i++) {
                 String[] parts = flags[i].split("=");
                 if (parts.length == 2) {
                     String key = parts[0].trim();
                     String value = parts[1].trim();
-                    data.add(new JInfoData(key, value)); // Добавляем данные в таблицу
+                    jvmFlags.add(new JInfoData(key, value)); // Добавляем данные в таблицу
                 }
             }            
+            
+            // Обновляем таблицу на JavaFX потоке
+            javafx.application.Platform.runLater(() -> jvmFlagsTableView.refresh());            
         } else {
             // Обрабатываем обычные строки с ключами и значениями
             String[] parts = line.split("=");
             if (parts.length == 2) { // Если строка содержит ключ и значение
                 String key = parts[0].trim();
                 String value = parts[1].trim();
-                data.add(new JInfoData(key, value)); // Добавляем данные в таблицу
+                jvmParams.add(new JInfoData(key, value)); // Добавляем данные в таблицу
 
                 // Обновляем таблицу на JavaFX потоке
-                javafx.application.Platform.runLater(() -> jInfoTableView.refresh());
+                javafx.application.Platform.runLater(() -> jvmParamsTableView.refresh());
             }
         }
     }
@@ -154,9 +169,12 @@ public class PrimaryController {
         assert pathTextField != null : "fx:id=\"pathTextField\" was not injected: check your FXML file 'primary.fxml'.";
         assert startButton != null : "fx:id=\"startButton\" was not injected: check your FXML file 'primary.fxml'.";
         assert stopButton != null : "fx:id=\"stopButton\" was not injected: check your FXML file 'primary.fxml'.";
-        assert jInfoTableView != null : "fx:id=\"jInfoTableView\" was not injected: check your FXML file 'primary.fxml'.";
-        assert nameColumn != null : "fx:id=\"nameColumn\" was not injected: check your FXML file 'primary.fxml'.";
-        assert valueColumn != null : "fx:id=\"valueColumn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert jvmFlagsTableView != null : "fx:id=\"jvmFlagsTableView\" was not injected: check your FXML file 'primary.fxml'.";
+        assert flagNameColumn != null : "fx:id=\"flagNameColumn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert flagValueColumn != null : "fx:id=\"flagValueColumn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert jvmParamsTableView != null : "fx:id=\"jvmParamTableView\" was not injected: check your FXML file 'primary.fxml'.";
+        assert paramNameColumn != null : "fx:id=\"paramNameColumn\" was not injected: check your FXML file 'primary.fxml'.";
+        assert paramValueColumn != null : "fx:id=\"paramValueColumn\" was not injected: check your FXML file 'primary.fxml'.";
         assert outputParamter != null : "fx:id=\"outputParamter\" was not injected: check your FXML file 'primary.fxml'.";
         assert outputArea != null : "fx:id=\"outputArea\" was not injected: check your FXML file 'primary.fxml'.";
         assert pidText != null : "fx:id=\"pidText\" was not injected: check your FXML file 'primary.fxml'.";
