@@ -4,7 +4,7 @@
 
 ## Описание
 
-**jar-runner** — это графическое приложение на JavaFX, которое позволяет удобно запускать JAR-файлы Java-приложений с контролем параметров JVM и мониторингом вывода.
+**jar-runner** — это графическое приложение на Java Swing, которое позволяет удобно запускать JAR-файлы Java-приложений с контролем параметров JVM и мониторингом вывода.
 
 ## Возможности
 
@@ -18,7 +18,6 @@
 
 - Java 11 или выше
 - Maven 3.x
-- JavaFX 13
 
 ## Сборка и запуск
 
@@ -31,15 +30,21 @@ mvn clean package
 ### Запуск приложения
 
 ```bash
-mvn clean javafx:run
+java -jar target/jar-runner-1.0.jar
+```
+
+Или через Maven:
+
+```bash
+mvn exec:java -Dexec.mainClass="ru.isokolov.jar.runner.App"
 ```
 
 ### Отладка
 
-Для запуска в режиме отладки:
+Для запуска в режиме отладки используйте стандартные параметры JVM:
 
 ```bash
-mvn clean javafx:run@debug
+java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000 -jar target/jar-runner-1.0.jar
 ```
 
 Затем подключите отладчик к порту `8000`.
@@ -48,15 +53,10 @@ mvn clean javafx:run@debug
 
 ```
 src/main/java/ru/isokolov/jar/runner/
-├── App.java                      # Точка входа JavaFX приложения
+├── App.java                      # Точка входа Swing приложения
 ├── PrimaryController.java        # Контроллер главного экрана
-├── SecondaryController.java      # Контроллер вторичного экрана
 ├── JarApplicationProcessor.java  # Управление процессом запуска JAR
 └── JInfoData.java                # Модель данных для отображения информации JVM
-
-src/main/resources/ru/isokolov/jar/runner/
-├── primary.fxml                  # Разметка главного окна
-└── secondary.fxml                # Разметка вторичного окна
 ```
 
 ## Использование
@@ -70,9 +70,8 @@ src/main/resources/ru/isokolov/jar/runner/
 ## Технологии
 
 - **Java 11**
-- **JavaFX 13** — для создания графического интерфейса
+- **Java Swing** — для создания графического интерфейса
 - **Maven** — для сборки проекта
-- **FXML** — для декларативного описания UI
 
 ## Лицензия
 
