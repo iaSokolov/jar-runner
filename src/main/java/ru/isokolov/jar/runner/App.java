@@ -1,38 +1,52 @@
 package ru.isokolov.jar.runner;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 
-public class App extends Application {
+public class App {
 
-    private static Scene scene;
-
-    @Override
-    public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
-            
-        stage.setOnCloseRequest(event -> {
-            JarApplicationProcessor.stop();
-        });
-        
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }
-
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
-    }
+    private static JFrame frame;
+    private static JPanel mainPanel;
+    private static CardLayout cardLayout;
 
     public static void main(String[] args) {
-        launch();
-    }    
+        SwingUtilities.invokeLater(() -> {
+            createAndShowGUI();
+        });
+    }
+
+    private static void createAndShowGUI() {
+        frame = new JFrame("JAR Runner");
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                JarApplicationProcessor.stop();
+                System.exit(0);
+            }
+        });
+
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+
+        // Создаем основную панель
+        JPanel primaryPanel = createPrimaryPanel();
+        mainPanel.add(primaryPanel, "primary");
+
+        frame.add(mainPanel);
+        frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private static JPanel createPrimaryPanel() {
+        PrimaryController controller = new PrimaryController();
+        return controller.createPanel();
+    }
+
+    public static void switchToPanel(String panelName) {
+        cardLayout.show(mainPanel, panelName);
+    }
 }
